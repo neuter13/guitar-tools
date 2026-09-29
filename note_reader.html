@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Note Reader – Treble &amp; Bass Clef Trainer</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f8fafc;
+        --surface: #fff;
+        --s2: #f1f5f9;
+        --s3: #e2e8f0;
+        --text: #0f172a;
+        --text2: #475569;
+        --muted: #94a3b8;
+        --border: #e2e8f0;
+        --accent: #06b6d4;
+        --accent2: #2563eb;
+        --soft: rgba(6, 182, 212, 0.12);
+        --ok: #10b981;
+        --bad: #ef4444;
+        --shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+        --glow: 0 0 35px rgba(6, 182, 212, 0.16);
+        --paper: #fff;
+      }
+      html[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #020617;
+        --surface: #0f172a;
+        --s2: #1e293b;
+        --s3: #334155;
+        --text: #f8fafc;
+        --text2: #cbd5e1;
+        --muted: #64748b;
+        --border: #1e293b;
+        --accent: #22d3ee;
+        --accent2: #3b82f6;
+        --soft: rgba(34, 211, 238, 0.14);
+        --shadow: 0 14px 42px rgba(0, 0, 0, 0.28);
+        --glow: 0 0 45px rgba(34, 211, 238, 0.2);
+        --paper: #0b1222;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        transition:
+          background 0.25s,
+          color 0.25s;
+      }
+      button,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        border: 0;
+        cursor: pointer;
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding-bottom: 28px;
+      }
+      header {
+        padding: 22px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: #fff;
+        font-size: 22px;
+        box-shadow: 0 10px 26px rgba(6, 182, 212, 0.25);
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .brand p {
+        margin: 4px 0 0;
+        color: var(--text2);
+        font-size: 0.75rem;
+      }
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: var(--s2);
+        border: 1px solid var(--border);
+        color: var(--text2);
+        font-size: 1.1rem;
+      }
+      .icon-btn:hover {
+        background: var(--s3);
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 24px;
+        align-items: start;
+      }
+      .col {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 26px;
+        box-shadow: var(--shadow);
+      }
+      .stage {
+        padding: 28px;
+        box-shadow: var(--shadow), var(--glow);
+      }
+      .paper {
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 6px 8px;
+      }
+      #staff {
+        display: block;
+        width: 100%;
+        height: auto;
+        color: var(--text);
+      }
+      .feedback {
+        min-height: 64px;
+        text-align: center;
+        margin: 14px 0 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+      }
+      .fb-main {
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .fb-sub {
+        font-size: 0.85rem;
+        color: var(--text2);
+      }
+      .fb-main.ok {
+        color: var(--ok);
+      }
+      .fb-main.bad {
+        color: var(--bad);
+      }
+      .accs {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        min-height: 44px;
+      }
+      .acc {
+        width: 64px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--s2);
+        border: 1px solid var(--border);
+        font-size: 1.5rem;
+        line-height: 1;
+        font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols", system-ui, sans-serif;
+      }
+      .acc.on {
+        background: var(--soft);
+        border-color: var(--accent);
+        color: var(--accent2);
+      }
+      .keys {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
+      }
+      .key {
+        position: relative;
+        height: 74px;
+        border-radius: 16px;
+        background: var(--s2);
+        border: 1px solid var(--border);
+        font-size: 1.7rem;
+        font-weight: 800;
+        transition:
+          transform 0.08s,
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .key:hover:not(:disabled) {
+        background: var(--s3);
+      }
+      .key:active:not(:disabled) {
+        transform: scale(0.96);
+      }
+      .key:disabled {
+        cursor: default;
+      }
+      .key.right {
+        background: var(--ok);
+        border-color: var(--ok);
+        color: #fff;
+      }
+      .key.wrong {
+        background: var(--bad);
+        border-color: var(--bad);
+        color: #fff;
+      }
+      .nextrow {
+        display: flex;
+        justify-content: center;
+        margin-top: 14px;
+        min-height: 46px;
+      }
+      .primary {
+        padding: 12px 28px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: #fff;
+        font-weight: 700;
+        box-shadow: 0 8px 22px rgba(37, 99, 235, 0.28);
+      }
+      .primary[hidden] {
+        display: none;
+      }
+      .hint {
+        margin: 12px 0 0;
+        text-align: center;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .settings {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      h2 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+      .sec {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .lbl {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text2);
+      }
+      .seg {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        gap: 6px;
+        background: var(--s2);
+        padding: 4px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
+      .seg button {
+        padding: 8px 4px;
+        border-radius: 9px;
+        background: transparent;
+        color: var(--text2);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+      .seg [data-v="sharp"],
+      .seg [data-v="flat"],
+      .seg [data-v="both"] {
+        font-size: 1.15rem;
+        line-height: 1;
+        font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols", system-ui, sans-serif;
+      }
+      .seg button.on {
+        background: var(--surface);
+        color: var(--accent2);
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      select {
+        width: 100%;
+        padding: 9px 10px;
+        border-radius: 11px;
+        border: 1px solid var(--border);
+        background: var(--s2);
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      .note {
+        margin: 0;
+        font-size: 0.75rem;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--border);
+        margin: 0;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        cursor: pointer;
+        font-size: 0.88rem;
+        font-weight: 600;
+      }
+      .row input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .sw {
+        width: 42px;
+        height: 24px;
+        border-radius: 99px;
+        background: var(--s3);
+        position: relative;
+        flex: none;
+        transition: 0.2s;
+      }
+      .sw::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        transition: 0.2s;
+      }
+      .row input:checked + .sw {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+      }
+      .row input:checked + .sw::after {
+        transform: translateX(18px);
+      }
+      .row input:focus-visible + .sw {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .stats {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .tiles {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .tile {
+        background: var(--s2);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+      }
+      .tile b {
+        display: block;
+        font-size: 1.35rem;
+        letter-spacing: -0.02em;
+      }
+      .tile span {
+        font-size: 0.72rem;
+        color: var(--text2);
+      }
+      .hist {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        min-height: 14px;
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .dot.ok {
+        background: var(--ok);
+      }
+      .dot.bad {
+        background: var(--bad);
+      }
+      .link {
+        background: none;
+        color: var(--text2);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: underline;
+        align-self: flex-start;
+        padding: 0;
+      }
+      @media (max-width: 920px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 520px) {
+        .stage {
+          padding: 16px;
+        }
+        .key {
+          height: 60px;
+          font-size: 1.4rem;
+        }
+        .keys {
+          gap: 6px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div class="brand">
+          <div class="mark">♪</div>
+          <div>
+            <h1>Note Reader</h1>
+            <p>Memorize notes on the treble &amp; bass clefs</p>
+          </div>
+        </div>
+        <button class="icon-btn" id="theme" aria-label="Toggle dark mode">🌙</button>
+      </header>
+      <main>
+        <div class="col">
+          <section class="card stage">
+            <div class="paper">
+              <svg
+                id="staff"
+                viewBox="0 0 560 250"
+                role="img"
+                aria-label="Musical staff with a note"
+              ></svg>
+            </div>
+            <div class="feedback" aria-live="polite">
+              <div class="fb-main" id="fbMain">What note is this?</div>
+              <div class="fb-sub" id="fbSub"></div>
+            </div>
+            <div class="accs" id="accs"></div>
+            <div class="keys" id="keys"></div>
+            <div class="nextrow"><button class="primary" id="next" hidden>Next note</button></div>
+            <p class="hint">Keys: A–G to answer · ↑ sharp · ↓ flat · Enter for next</p>
+          </section>
+        </div>
+        <div class="col">
+          <section class="card settings">
+            <div class="sec">
+              <h2>Clef</h2>
+              <div class="seg" data-key="clef">
+                <button data-v="treble">Treble</button><button data-v="bass">Bass</button
+                ><button data-v="both">Both</button>
+              </div>
+            </div>
+            <div class="sec">
+              <h2>Range</h2>
+              <div class="two">
+                <div>
+                  <div class="lbl">Ledger lines above</div>
+                  <select id="above"></select>
+                </div>
+                <div>
+                  <div class="lbl">Ledger lines below</div>
+                  <select id="below"></select>
+                </div>
+              </div>
+              <p class="note" id="rangeInfo"></p>
+            </div>
+            <div class="sec">
+              <h2>Accidentals</h2>
+              <div class="seg" data-key="acc">
+                <button data-v="none">None</button><button data-v="sharp">♯</button
+                ><button data-v="flat">♭</button><button data-v="both">♯ ♭</button>
+              </div>
+            </div>
+            <hr />
+            <label class="row"
+              >Auto-advance after correct<input type="checkbox" id="auto" /><i class="sw"></i
+            ></label>
+            <label class="row"
+              >Focus on notes I miss<input type="checkbox" id="adapt" /><i class="sw"></i
+            ></label>
+            <label class="row"
+              >Play the note's sound<input type="checkbox" id="sound" /><i class="sw"></i
+            ></label>
+            <label class="row"
+              >Show guide labels on staff<input type="checkbox" id="guide" /><i class="sw"></i
+            ></label>
+          </section>
+          <section class="card stats">
+            <h2>This session</h2>
+            <div class="tiles">
+              <div class="tile"><b id="stRight">0</b><span>Correct</span></div>
+              <div class="tile"><b id="stAcc">–</b><span>Accuracy</span></div>
+              <div class="tile">
+                <b id="stStreak">0</b><span>Streak (best <span id="stBest">0</span>)</span>
+              </div>
+              <div class="tile"><b id="stTime">–</b><span>Avg. time</span></div>
+            </div>
+            <div class="hist" id="hist"></div>
+            <button class="link" id="reset">Reset stats</button>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script>
+      const $ = (s) => document.querySelector(s);
+      const LET = ["C", "D", "E", "F", "G", "A", "B"],
+        SEMI = [0, 2, 4, 5, 7, 9, 11],
+        SYM = { "-1": "♭", 0: "", 1: "♯" };
+      const BASE = { treble: 30, bass: 18 }; // diatonic step (oct*7+letter) of each clef's bottom line: E4 and G2
+      const SP = 18,
+        BOT = 162,
+        CX = 330,
+        K = SP / 170; // staff space, bottom-line y, note x, glyph scale
+      const G = {
+        treble: {
+          d: "M434 2Q464 -103 464 -170Q464 -223 427 -257Q390 -291 337 -291Q287 -291 250 -262Q213 -232 213 -190Q213 -160 234 -134Q254 -107 284 -107Q313 -107 332 -128Q350 -150 350 -178Q350 -240 280 -240Q298 -268 338 -268Q353 -268 368 -264Q384 -259 401 -248Q418 -237 428 -214Q439 -190 439 -157Q439 -136 411 -6Q389 -12 356 -12Q259 -12 190 60Q120 132 120 232Q120 267 132 303Q143 339 158 366Q172 394 200 428Q229 463 248 484Q268 504 303 539Q280 621 280 689Q280 779 313 840Q346 900 379 900Q389 900 402 887Q414 874 426 851Q438 828 446 790Q455 753 455 710Q455 551 342 447L368 329Q384 332 397 332Q458 332 500 282Q542 233 542 162Q542 44 434 2ZM426 746Q426 801 394 801Q358 801 333 748Q308 695 308 630Q308 588 321 557Q359 580 392 640Q426 699 426 746ZM498 128Q498 183 466 216Q434 249 383 249L428 23Q498 52 498 128ZM407 17 361 247Q334 241 312 214Q289 187 289 158Q289 143 295 128Q301 114 310 104Q318 94 327 86Q336 78 342 74Q348 71 348 71L340 66Q307 75 278 106Q248 137 248 184Q248 231 278 270Q307 310 343 323L325 430Q168 299 168 177Q168 104 223 55Q278 6 348 6Q365 6 407 17Z",
+          x: 120,
+          y: 154,
+        },
+        bass: {
+          d: "M564 704Q582 704 594 691Q607 678 607 661Q607 644 593 631Q579 618 563 618Q521 618 521 663Q521 681 534 692Q547 704 564 704ZM607 469Q607 450 594 437Q581 424 564 424Q521 424 521 469Q521 485 534 498Q546 511 564 511Q582 511 594 497Q607 483 607 469ZM285 757Q366 757 421 702Q476 646 476 569Q476 531 466 495Q455 459 432 426Q409 394 386 367Q363 340 326 313Q289 286 264 268Q239 249 196 226Q154 203 136 194Q117 184 80 166L75 182Q76 183 102 200Q128 217 144 228Q160 238 192 263Q223 288 244 310Q265 331 292 364Q318 396 334 427Q350 458 362 498Q373 538 373 578Q373 735 262 735Q225 735 199 726Q173 716 162 702Q150 688 145 678Q140 667 140 659Q140 644 160 644Q168 644 179 648Q190 651 194 651Q221 651 239 634Q257 617 257 592Q257 563 235 544Q213 525 183 525Q144 525 119 548Q94 571 94 607Q94 673 150 715Q207 757 285 757Z",
+          x: 75,
+          y: 565,
+        },
+        sharp: {
+          d: "M365 24 319 6V-193L275 -209V-10L138 -63V-262L94 -279V-80L50 -96V0L94 17V262L50 245V341L94 358V589L138 606V376L275 429V659L319 675V446L365 464V366L319 348V104L365 122ZM275 88V332L138 279V34Z",
+          x: 207,
+          y: 198,
+        },
+        flat: {
+          d: "M222 441Q275 441 302 408Q329 375 329 317Q329 273 300 234Q270 195 192 117Q115 39 56 -34V783L99 802V402Q148 441 222 441ZM232 308Q232 373 183 373Q159 373 134 358Q110 344 99 319V87Q159 155 196 214Q232 274 232 308Z",
+          x: 192,
+          y: 209,
+        },
+      };
+      const DEF = {
+        clef: "treble",
+        above: 1,
+        below: 1,
+        acc: "none",
+        auto: true,
+        adapt: true,
+        sound: true,
+        guide: false,
+        dark: null,
+      };
+      let S = Object.assign({}, DEF);
+      try {
+        Object.assign(S, JSON.parse(localStorage.getItem("noteReader.v1") || "{}"));
+      } catch (e) {}
+      const save = () => {
+        try {
+          localStorage.setItem("noteReader.v1", JSON.stringify(S));
+        } catch (e) {}
+      };
+      let cur = null,
+        answered = false,
+        sel = 0,
+        t0 = 0,
+        timer = 0,
+        miss = {},
+        st,
+        ac;
+      const fresh = () => ({ right: 0, wrong: 0, streak: 0, best: 0, times: [], hist: [] });
+      st = fresh();
+      const nm = (n) => LET[n.step % 7] + SYM[n.a] + Math.floor(n.step / 7);
+      const stepName = (s) => LET[s % 7] + Math.floor(s / 7);
+      const yOf = (p) => BOT - (p * SP) / 2;
+      const sharpOK = (S) => S.acc === "sharp" || S.acc === "both",
+        flatOK = (S) => S.acc === "flat" || S.acc === "both";
+
+      function pool() {
+        const out = [];
+        for (const c of S.clef === "both" ? ["treble", "bass"] : [S.clef])
+          for (let p = -2 * S.below; p <= 8 + 2 * S.above; p++) {
+            const step = BASE[c] + p,
+              l = step % 7,
+              accs = [0];
+            if (sharpOK(S) && l !== 2 && l !== 6) accs.push(1); // no E♯ / B♯
+            if (flatOK(S) && l !== 0 && l !== 3) accs.push(-1); // no C♭ / F♭
+            for (const a of accs) out.push({ c, p, step, a });
+          }
+        return out;
+      }
+      const key = (n) => n.c + n.step + n.a;
+      function pick() {
+        const P = pool(),
+          w = P.map((n) =>
+            n === cur || (cur && key(n) === key(cur) && P.length > 1)
+              ? 0
+              : S.adapt
+                ? 1 + 2 * (miss[key(n)] || 0)
+                : 1,
+          );
+        let r = Math.random() * w.reduce((a, b) => a + b, 0);
+        for (let i = 0; i < P.length; i++) {
+          r -= w[i];
+          if (r < 0) return P[i];
+        }
+        return P[0];
+      }
+
+      function draw(state) {
+        const n = cur,
+          y = yOf(n.p),
+          col = state === "right" ? "var(--ok)" : state === "wrong" ? "var(--bad)" : "currentColor";
+        let s = "";
+        for (let i = 0; i < 5; i++) {
+          const yy = yOf(i * 2);
+          s += `<line x1="10" x2="550" y1="${yy}" y2="${yy}" stroke="currentColor" stroke-width="1.4" opacity=".75"/>`;
+        }
+        s += `<line x1="10" x2="10" y1="${yOf(0)}" y2="${yOf(8)}" stroke="currentColor" stroke-width="1.4" opacity=".75"/>`;
+        if (S.guide) {
+          const base = BASE[n.c];
+          for (let p = 0; p <= 8; p++)
+            s += `<text x="528" y="${yOf(p) + 4}" font-size="11" text-anchor="middle" fill="currentColor" opacity=".4" font-weight="700">${LET[(base + p) % 7]}</text>`;
+        }
+        const g = G[n.c],
+          ox = n.c === "treble" ? 18 - g.x * K : 18 - g.x * K,
+          oy = n.c === "treble" ? yOf(2) : yOf(6);
+        s += `<path d="${g.d}" fill="currentColor" transform="translate(${ox},${oy}) scale(${K},${-K}) translate(0,${-g.y})"/>`;
+        const led = [];
+        if (n.p < 0) for (let e = -2; e >= (n.p % 2 ? n.p + 1 : n.p); e -= 2) led.push(e);
+        if (n.p > 8) for (let e = 10; e <= (n.p % 2 ? n.p - 1 : n.p); e += 2) led.push(e);
+        for (const e of led)
+          s += `<line x1="${CX - 21}" x2="${CX + 21}" y1="${yOf(e)}" y2="${yOf(e)}" stroke="currentColor" stroke-width="1.6"/>`;
+        if (n.a) {
+          const a = G[n.a === 1 ? "sharp" : "flat"],
+            ka = K * 0.5;
+          s += `<path d="${a.d}" fill="${col}" transform="translate(${CX - 27},${y}) scale(${ka},${-ka}) translate(${-a.x},${-a.y})"/>`;
+        }
+        const up = n.p < 4,
+          sx = up ? CX + 10.4 : CX - 10.4;
+        s += `<line x1="${sx}" x2="${sx}" y1="${y}" y2="${y + (up ? -3.5 : 3.5) * SP}" stroke="${col}" stroke-width="1.7"/>`;
+        s += `<ellipse cx="${CX}" cy="${y}" rx="11.6" ry="8.6" fill="${col}" transform="rotate(-20 ${CX} ${y})"/>`;
+        $("#staff").innerHTML = s;
+      }
+
+      function accUI() {
+        const box = $("#accs");
+        box.innerHTML = "";
+        const add = (v, t) => {
+          const b = document.createElement("button");
+          b.className = "acc" + (sel === v ? " on" : "");
+          b.textContent = t;
+          b.disabled = answered;
+          b.setAttribute("aria-label", v > 0 ? "Sharp" : "Flat");
+          b.setAttribute("aria-pressed", sel === v);
+          b.onclick = () => setAcc(v);
+          box.appendChild(b);
+        };
+        if (flatOK(S)) add(-1, "♭");
+        if (sharpOK(S)) add(1, "♯");
+      }
+      function setAcc(v) {
+        if (answered || (v === 1 && !sharpOK(S)) || (v === -1 && !flatOK(S))) return;
+        sel = sel === v ? 0 : v;
+        accUI();
+      }
+
+      function next() {
+        clearTimeout(timer);
+        cur = pick();
+        answered = false;
+        sel = 0;
+        t0 = performance.now();
+        $("#next").hidden = true;
+        $("#fbMain").className = "fb-main";
+        $("#fbMain").textContent = "What note is this?";
+        $("#fbSub").textContent = cur.c === "treble" ? "Treble clef" : "Bass clef";
+        document.querySelectorAll(".key").forEach((k) => {
+          k.className = "key";
+          k.disabled = false;
+        });
+        draw("idle");
+        accUI();
+      }
+
+      function answer(L) {
+        if (answered) return;
+        answered = true;
+        const ok = LET[cur.step % 7] === L && sel === cur.a,
+          ms = performance.now() - t0,
+          k = key(cur),
+          said = L + SYM[sel];
+        document.querySelectorAll(".key").forEach((b) => {
+          b.disabled = true;
+          if (b.dataset.l === LET[cur.step % 7] && (ok || true)) b.classList.add("right");
+          if (!ok && b.dataset.l === L && L !== LET[cur.step % 7]) b.classList.add("wrong");
+        });
+        const fm = $("#fbMain");
+        if (ok) {
+          st.right++;
+          st.streak++;
+          st.best = Math.max(st.best, st.streak);
+          st.times.push(ms);
+          miss[k] = Math.max(0, (miss[k] || 0) - 1);
+          fm.className = "fb-main ok";
+          fm.textContent = "Correct — " + nm(cur);
+          $("#fbSub").textContent = (ms / 1000).toFixed(1) + " s";
+        } else {
+          st.wrong++;
+          st.streak = 0;
+          miss[k] = (miss[k] || 0) + 1;
+          fm.className = "fb-main bad";
+          fm.textContent = "It’s " + nm(cur);
+          $("#fbSub").textContent =
+            sel !== cur.a && L === LET[cur.step % 7]
+              ? "Right letter — check the accidental (you said " + said + ")"
+              : "You said " + said;
+        }
+        st.hist.push(ok);
+        draw(ok ? "right" : "wrong");
+        accUI();
+        stats();
+        if (S.sound) play(cur);
+        if (ok && S.auto) timer = setTimeout(next, 900);
+        else {
+          const b = $("#next");
+          b.hidden = false;
+          b.focus();
+        }
+      }
+
+      function play(n) {
+        try {
+          ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+          const midi = (Math.floor(n.step / 7) + 1) * 12 + SEMI[n.step % 7] + n.a,
+            f = 440 * Math.pow(2, (midi - 69) / 12),
+            t = ac.currentTime;
+          const o = ac.createOscillator(),
+            g = ac.createGain();
+          o.type = "triangle";
+          o.frequency.value = f;
+          g.gain.setValueAtTime(0, t);
+          g.gain.linearRampToValueAtTime(0.25, t + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 1.1);
+          o.connect(g).connect(ac.destination);
+          o.start(t);
+          o.stop(t + 1.15);
+        } catch (e) {}
+      }
+
+      function stats() {
+        const tot = st.right + st.wrong;
+        $("#stRight").textContent = st.right;
+        $("#stAcc").textContent = tot ? Math.round((100 * st.right) / tot) + "%" : "–";
+        $("#stStreak").textContent = st.streak;
+        $("#stBest").textContent = st.best;
+        $("#stTime").textContent = st.times.length
+          ? (st.times.reduce((a, b) => a + b, 0) / st.times.length / 1000).toFixed(1) + " s"
+          : "–";
+        $("#hist").innerHTML = st.hist
+          .slice(-30)
+          .map((o) => `<i class="dot ${o ? "ok" : "bad"}"></i>`)
+          .join("");
+      }
+
+      function rangeInfo() {
+        const cl = S.clef === "both" ? ["treble", "bass"] : [S.clef];
+        $("#rangeInfo").innerHTML =
+          cl
+            .map(
+              (c) =>
+                (c === "treble" ? "Treble" : "Bass") +
+                ": " +
+                stepName(BASE[c] - 2 * S.below) +
+                " – " +
+                stepName(BASE[c] + 8 + 2 * S.above),
+            )
+            .join("<br>") +
+          "<br>" +
+          pool().length +
+          " possible notes" +
+          (S.acc !== "none" ? " (E♯, B♯, C♭, F♭ excluded)" : "");
+      }
+
+      function sync() {
+        document
+          .querySelectorAll(".seg")
+          .forEach((g) =>
+            g
+              .querySelectorAll("button")
+              .forEach((b) => b.classList.toggle("on", S[g.dataset.key] === b.dataset.v)),
+          );
+        $("#above").value = S.above;
+        $("#below").value = S.below;
+        ["auto", "adapt", "sound", "guide"].forEach((k) => ($("#" + k).checked = S[k]));
+        rangeInfo();
+      }
+      function changed() {
+        save();
+        sync();
+        if (!answered || true) {
+          cur = null;
+          next();
+        }
+      }
+
+      // init
+      $("#keys").innerHTML = LET.map(
+        (l) => `<button class="key" data-l="${l}" aria-label="${l}">${l}</button>`,
+      ).join("");
+      document.querySelectorAll(".key").forEach((b) => (b.onclick = () => answer(b.dataset.l)));
+      ["above", "below"].forEach((id) => {
+        $("#" + id).innerHTML = [0, 1, 2, 3]
+          .map(
+            (i) => `<option value="${i}">${i ? i + (i > 1 ? " lines" : " line") : "None"}</option>`,
+          )
+          .join("");
+        $("#" + id).onchange = (e) => {
+          S[id] = +e.target.value;
+          changed();
+        };
+      });
+      document.querySelectorAll(".seg").forEach(
+        (g) =>
+          (g.onclick = (e) => {
+            const b = e.target.closest("button");
+            if (b) {
+              S[g.dataset.key] = b.dataset.v;
+              changed();
+            }
+          }),
+      );
+      ["auto", "adapt", "sound", "guide"].forEach(
+        (k) =>
+          ($("#" + k).onchange = (e) => {
+            S[k] = e.target.checked;
+            save();
+            if (k === "guide")
+              draw(answered ? ($("#fbMain").classList.contains("ok") ? "right" : "wrong") : "idle");
+          }),
+      );
+      $("#next").onclick = next;
+      $("#reset").onclick = () => {
+        st = fresh();
+        miss = {};
+        stats();
+      };
+      const dark = S.dark === null ? matchMedia("(prefers-color-scheme:dark)").matches : S.dark;
+      const setTheme = (d) => {
+        S.dark = d;
+        document.documentElement.dataset.theme = d ? "dark" : "light";
+        $("#theme").textContent = d ? "☀️" : "🌙";
+        save();
+      };
+      $("#theme").onclick = () => setTheme(S.dark === false);
+      setTheme(dark);
+      addEventListener("keydown", (e) => {
+        if (e.metaKey || e.ctrlKey || e.altKey || /^(SELECT|TEXTAREA)$/.test(e.target.tagName))
+          return;
+        const k = e.key;
+        if (/^[a-gA-G]$/.test(k)) {
+          answer(k.toUpperCase());
+          e.preventDefault();
+        } else if (k === "ArrowUp" || k === "#" || k === "+") {
+          setAcc(1);
+          e.preventDefault();
+        } else if (k === "ArrowDown" || k === "-") {
+          setAcc(-1);
+          e.preventDefault();
+        } else if ((k === "Enter" || k === " ") && answered && e.target.tagName !== "BUTTON") {
+          next();
+          e.preventDefault();
+        }
+      });
+      sync();
+      stats();
+      next();
+    </script>
+  </body>
+</html>

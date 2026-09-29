@@ -199,15 +199,122 @@
     }
 
     #noteDisplay {
-      font-size: clamp(5.2rem, 14vw, 9.25rem);
+      font-size: clamp(4.2rem, 12vw, 7.25rem);
       line-height: 0.95;
       font-weight: 850;
       letter-spacing: -0.06em;
       user-select: none;
       transition: transform 0.12s ease;
+      margin-bottom: 24px;
     }
 
     #noteDisplay.pop { transform: scale(1.09); }
+
+    /* FRETBOARD STYLES */
+    .fretboard-container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+      margin-bottom: 12px;
+    }
+    
+    .fretboard-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .string-label {
+      width: 20px;
+      font-size: 0.65rem;
+      font-weight: 850;
+      color: var(--text-2);
+      text-align: right;
+    }
+    
+    .fretboard-string {
+      flex: 1;
+      display: flex;
+      height: 22px;
+      position: relative;
+    }
+    
+    .string-line {
+      position: absolute;
+      left: 0; right: 0; top: 50%;
+      transform: translateY(-50%);
+      background: var(--muted);
+      height: 2px;
+      z-index: 1;
+      opacity: 0.6;
+    }
+    
+    .fret-slot {
+      flex: 1;
+      border-right: 2px solid var(--border);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .fret-slot:first-child {
+      border-left: 5px solid var(--text-2);
+    }
+
+    .inlay-dot {
+      position: absolute;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--muted);
+      opacity: 0.4;
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .fret-indicator {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      font-size: 0.6rem;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      font-weight: 850;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
+    }
+    
+    .fret-indicator.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Distinct visual style for notes hovered from Recent list */
+    .fret-indicator.hovered {
+      opacity: 1;
+      transform: scale(1.08);
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.45);
+    }
 
     .reshuffle-banner {
       position: absolute;
@@ -267,14 +374,8 @@
       background: color-mix(in srgb, var(--surface-2) 55%, transparent);
     }
 
-    #historyList::-webkit-scrollbar {
-      width: 9px;
-    }
-
-    #historyList::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
+    #historyList::-webkit-scrollbar { width: 9px; }
+    #historyList::-webkit-scrollbar-track { background: transparent; }
     #historyList::-webkit-scrollbar-thumb {
       background: var(--surface-3);
       border-radius: 999px;
@@ -292,6 +393,13 @@
       font-size: 0.78rem;
       font-weight: 800;
       flex: 0 0 auto;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+    
+    .history-badge:hover {
+      background: var(--surface-3);
+      border-color: #a855f7;
     }
 
     .history-badge.current {
@@ -329,9 +437,7 @@
     }
 
     .controls-card,
-    .settings-card {
-      padding: 22px;
-    }
+    .settings-card { padding: 22px; }
 
     .section-title {
       display: flex;
@@ -358,6 +464,7 @@
       color: var(--text-2);
       font-size: 0.84rem;
       font-weight: 800;
+      margin-bottom: 8px;
     }
 
     .field-row {
@@ -409,9 +516,7 @@
       font-weight: 800;
     }
 
-    .tempo-section {
-      margin-top: 18px;
-    }
+    .tempo-section { margin-top: 18px; }
 
     .tempo-header {
       display: flex;
@@ -494,7 +599,6 @@
 
     .primary-btn:hover,
     .danger-btn:hover { filter: brightness(1.04); }
-
     .primary-btn:active,
     .danger-btn:active { transform: scale(0.992); }
 
@@ -548,9 +652,7 @@
       background: var(--accent-soft);
     }
 
-    .preset-btn.some {
-      color: var(--accent);
-    }
+    .preset-btn.some { color: var(--accent); }
 
     .stack {
       display: flex;
@@ -611,13 +713,8 @@
       transition: transform 0.2s ease;
     }
 
-    .switch input:checked + .switch-track {
-      background: var(--accent);
-    }
-
-    .switch input:checked + .switch-track::after {
-      transform: translateX(18px);
-    }
+    .switch input:checked + .switch-track { background: var(--accent); }
+    .switch input:checked + .switch-track::after { transform: translateX(18px); }
 
     footer {
       padding: 4px 0 24px;
@@ -672,6 +769,10 @@
           <div class="note-stage">
             <p class="eyebrow">Current Spoken Note</p>
             <div id="noteDisplay" aria-live="polite">A</div>
+            
+            <div id="fretboardContainer" class="fretboard-container" aria-label="Guitar Fretboard Tracker">
+              <!-- Dynamically populated via JS -->
+            </div>
           </div>
 
           <div class="history-block">
@@ -682,7 +783,7 @@
 
         <div class="card controls-card stack">
           <div>
-            <div class="field-label">
+            <div class="field-label" style="margin-bottom:0;">
               <span>♩ Tempo (BPM)</span>
               <div class="field-row">
                 <input id="bpmInput" class="number-input" type="number" min="20" max="240" value="60">
@@ -714,6 +815,39 @@
 
       <aside class="right-column">
         <div class="card settings-card stack">
+          <h2 class="section-title"><span class="title-icon">🎸</span> Fretboard Target</h2>
+          
+          <div class="toggle-row">
+            <span class="toggle-label">Show Fretboard</span>
+            <label class="switch" aria-label="Show Fretboard">
+              <input id="fretboardToggle" type="checkbox" checked>
+              <span class="switch-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <span class="toggle-label">Hover Recents Shows Fretboard (when hidden)</span>
+            <label class="switch" aria-label="Hover Recents Shows Fretboard when hidden">
+              <input id="hoverFretboardToggle" type="checkbox" checked>
+              <span class="switch-track"></span>
+            </label>
+          </div>
+          
+          <div>
+            <label class="field-label" for="targetStringSelect">Highlight Note On:</label>
+            <select id="targetStringSelect" class="select-input">
+              <option value="all">All Strings</option>
+              <option value="str0">String 1 (High E)</option>
+              <option value="str1">String 2 (B)</option>
+              <option value="str2">String 3 (G)</option>
+              <option value="str3">String 4 (D)</option>
+              <option value="str4">String 5 (A)</option>
+              <option value="str5">String 6 (Low E)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card settings-card stack">
           <h2 class="section-title"><span class="title-icon">⚙</span> Note Pool Settings</h2>
 
           <div class="preset-grid">
@@ -728,7 +862,7 @@
           <div class="separator"></div>
 
           <div>
-            <label class="field-label" for="shuffleMode">Shuffle Strategy</label>
+            <label class="field-label" for="shuffleMode" style="margin-bottom:0;">Shuffle Strategy</label>
             <select id="shuffleMode" class="select-input">
               <option value="bag">Bag Shuffle (Cycle all before repeat)</option>
               <option value="no-immediate">Random (No immediate repeat)</option>
@@ -749,14 +883,14 @@
           <h2 class="section-title"><span class="title-icon">🔊</span> Speech & Audio</h2>
 
           <div>
-            <label class="field-label" for="voiceSelect">Voice</label>
+            <label class="field-label" for="voiceSelect" style="margin-bottom:0;">Voice</label>
             <select id="voiceSelect" class="select-input">
               <option value="">Default System Voice</option>
             </select>
           </div>
 
           <div>
-            <div class="field-label">
+            <div class="field-label" style="margin-bottom:0;">
               <span>Speech Rate</span>
               <span id="rateVal">1.2x</span>
             </div>
@@ -764,7 +898,7 @@
           </div>
 
           <div>
-            <div class="field-label">
+            <div class="field-label" style="margin-bottom:0;">
               <span>Speech Pitch</span>
               <span id="pitchVal">1.0</span>
             </div>
@@ -788,8 +922,6 @@
   </div>
 
   <script>
-    // Keep note speech in lowercase. A comma gives accidentals a natural pause,
-    // e.g. "a, sharp" and "a, flat".
     const ALL_NOTES = [
       { id: 'A',  name: 'A',  speak: 'a' },
       { id: 'A#', name: 'A♯', speak: 'A-sharp' },
@@ -810,6 +942,21 @@
       { id: 'Ab', name: 'A♭', speak: 'A-flat' }
     ];
 
+    const STRING_ROOTS = [
+      { id: 'str0', label: 'E', root: 4 },  // High E
+      { id: 'str1', label: 'B', root: 11 }, // B
+      { id: 'str2', label: 'G', root: 7 },  // G
+      { id: 'str3', label: 'D', root: 2 },  // D
+      { id: 'str4', label: 'A', root: 9 },  // A
+      { id: 'str5', label: 'E', root: 4 }   // Low E
+    ];
+
+    const CHROMATIC_INDEX_MAP = {
+      'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3,
+      'E': 4, 'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8,
+      'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11
+    };
+
     const GROUPS = {
       naturals: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
       chromatic: ['A#', 'C#', 'D#', 'F#', 'G#'],
@@ -825,7 +972,6 @@
     let isPlaying = false;
     let timerId = null;
 
-    // Each entry is either a note name or { type: 'divider', count: number }.
     let historyQueue = [];
     let bagCount = 0;
 
@@ -856,6 +1002,81 @@
     const speechPitch = document.getElementById('speechPitch');
     const pitchVal = document.getElementById('pitchVal');
     const clickToggle = document.getElementById('clickToggle');
+    const fretboardContainer = document.getElementById('fretboardContainer');
+    const fretboardToggle = document.getElementById('fretboardToggle');
+    const hoverFretboardToggle = document.getElementById('hoverFretboardToggle');
+    const targetStringSelect = document.getElementById('targetStringSelect');
+
+    function initFretboard() {
+      fretboardContainer.innerHTML = '';
+      
+      STRING_ROOTS.forEach((str, sIdx) => {
+        const row = document.createElement('div');
+        row.className = 'fretboard-row';
+        
+        const label = document.createElement('div');
+        label.className = 'string-label';
+        label.textContent = str.label;
+        row.appendChild(label);
+        
+        const stringTrack = document.createElement('div');
+        stringTrack.className = 'fretboard-string';
+        
+        const line = document.createElement('div');
+        line.className = 'string-line';
+        stringTrack.appendChild(line);
+
+        for (let fret = 1; fret <= 12; fret++) {
+          const slot = document.createElement('div');
+          slot.className = 'fret-slot';
+          
+          if ([3, 5, 7, 9].includes(fret) && sIdx === 2) {
+            const dot = document.createElement('div');
+            dot.className = 'inlay-dot';
+            slot.appendChild(dot);
+          } else if (fret === 12 && (sIdx === 1 || sIdx === 3)) {
+            const dot = document.createElement('div');
+            dot.className = 'inlay-dot';
+            slot.appendChild(dot);
+          }
+
+          const indicator = document.createElement('div');
+          indicator.className = 'fret-indicator';
+          indicator.id = `fret-marker-${sIdx}-${fret}`;
+          
+          slot.appendChild(indicator);
+          stringTrack.appendChild(slot);
+        }
+        row.appendChild(stringTrack);
+        fretboardContainer.appendChild(row);
+      });
+    }
+
+    function updateFretboard(noteId, noteName, isHover = false) {
+      document.querySelectorAll('.fret-indicator').forEach(el => {
+        el.classList.remove('active', 'hovered');
+      });
+      
+      if (!noteId) return;
+
+      const targetStrId = targetStringSelect.value;
+      const noteTargetIndex = CHROMATIC_INDEX_MAP[noteId];
+
+      if (noteTargetIndex === undefined) return;
+
+      STRING_ROOTS.forEach((str, sIdx) => {
+        if (targetStrId !== 'all' && targetStrId !== str.id) return;
+
+        let targetFret = (noteTargetIndex - str.root + 12) % 12;
+        if (targetFret === 0) targetFret = 12;
+
+        const marker = document.getElementById(`fret-marker-${sIdx}-${targetFret}`);
+        if (marker) {
+          marker.textContent = noteName;
+          marker.classList.add(isHover ? 'hovered' : 'active');
+        }
+      });
+    }
 
     function loadSelectedNoteIds() {
       const saved = localStorage.getItem('selectedNoteIds');
@@ -863,9 +1084,7 @@
         try {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-        } catch (error) {
-          console.error('Failed to parse selectedNoteIds from localStorage', error);
-        }
+        } catch (error) {}
       }
       return [...GROUPS.naturals];
     }
@@ -880,9 +1099,7 @@
         try {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-        } catch (error) {
-          console.error('Failed to parse tempo presets from localStorage', error);
-        }
+        } catch (error) {}
       }
       return [...DEFAULT_TEMPO_PRESETS];
     }
@@ -893,20 +1110,27 @@
 
     function loadSettings() {
       const savedShuffleMode = localStorage.getItem('shuffleMode');
-      if (savedShuffleMode) {
-        shuffleModeSelect.value = savedShuffleMode;
-      }
+      if (savedShuffleMode) shuffleModeSelect.value = savedShuffleMode;
 
       const savedReshuffleAlert = localStorage.getItem('reshuffleAlert');
-      if (savedReshuffleAlert !== null) {
-        reshuffleAlertToggle.checked = savedReshuffleAlert === 'true';
+      if (savedReshuffleAlert !== null) reshuffleAlertToggle.checked = savedReshuffleAlert === 'true';
+
+      const savedFretboardShow = localStorage.getItem('showFretboard');
+      if (savedFretboardShow !== null) {
+        fretboardToggle.checked = savedFretboardShow === 'true';
       }
+
+      const savedHoverShow = localStorage.getItem('hoverFretboard');
+      if (savedHoverShow !== null) {
+        hoverFretboardToggle.checked = savedHoverShow === 'true';
+      }
+
+      fretboardContainer.style.display = fretboardToggle.checked ? 'flex' : 'none';
     }
 
     function populateVoiceList() {
       if (!synth) return;
       voices = synth.getVoices().sort((a, b) => a.name.localeCompare(b.name));
-
       const currentSelected = voiceSelect.value;
       voiceSelect.innerHTML = '<option value="">Default System Voice</option>';
 
@@ -968,7 +1192,6 @@
 
     function renderNoteSelector() {
       noteCheckboxesGrid.innerHTML = '';
-
       ALL_NOTES.forEach(note => {
         const button = document.createElement('button');
         button.type = 'button';
@@ -977,7 +1200,6 @@
         button.addEventListener('click', () => toggleNoteSelection(note.id));
         noteCheckboxesGrid.appendChild(button);
       });
-
       updateGroupButtonStyles();
     }
 
@@ -988,7 +1210,6 @@
       } else {
         selectedNoteIds.push(id);
       }
-
       saveSelectedNoteIds();
       activeBag = [];
       renderNoteSelector();
@@ -997,9 +1218,7 @@
     function toggleGroup(groupKey) {
       const groupNotes = GROUPS[groupKey];
       if (!groupNotes) return;
-
       const allActive = groupNotes.every(id => selectedNoteIds.includes(id));
-
       if (allActive) {
         const remaining = selectedNoteIds.filter(id => !groupNotes.includes(id));
         if (remaining.length > 0) selectedNoteIds = remaining;
@@ -1008,7 +1227,6 @@
           if (!selectedNoteIds.includes(id)) selectedNoteIds.push(id);
         });
       }
-
       saveSelectedNoteIds();
       activeBag = [];
       renderNoteSelector();
@@ -1020,12 +1238,10 @@
         chromatic: document.getElementById('presetChromatic'),
         flats: document.getElementById('presetFlats')
       };
-
       Object.entries(buttons).forEach(([key, button]) => {
         const group = GROUPS[key];
         const allActive = group.every(id => selectedNoteIds.includes(id));
         const someActive = group.some(id => selectedNoteIds.includes(id));
-
         button.classList.toggle('all', allActive);
         button.classList.toggle('some', !allActive && someActive);
       });
@@ -1041,27 +1257,20 @@
 
     function getNextNote() {
       if (selectedNoteIds.length === 0) return ALL_NOTES[0];
-
       const mode = shuffleModeSelect.value;
       let chosenId = null;
 
       if (mode === 'bag') {
         if (activeBag.length === 0) {
           activeBag = shuffleInPlace([...selectedNoteIds]);
-
-          if (
-            activeBag.length > 1 &&
-            activeBag[activeBag.length - 1] === lastSpokenNoteId
-          ) {
+          if (activeBag.length > 1 && activeBag[activeBag.length - 1] === lastSpokenNoteId) {
             const first = activeBag.pop();
             activeBag.unshift(first);
           }
-
           bagCount += 1;
           historyQueue.unshift({ type: 'divider', count: bagCount });
           triggerReshuffleNotification();
         }
-
         chosenId = activeBag.pop();
       } else if (mode === 'no-immediate') {
         if (selectedNoteIds.length === 1) {
@@ -1080,12 +1289,8 @@
 
     function playClickSound() {
       if (!clickToggle.checked) return;
-
       try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
 
         const oscillator = audioCtx.createOscillator();
@@ -1098,33 +1303,23 @@
 
         oscillator.connect(gain);
         gain.connect(audioCtx.destination);
-
         oscillator.start();
         oscillator.stop(audioCtx.currentTime + 0.05);
-      } catch (error) {
-        console.error('Audio Click Error', error);
-      }
+      } catch (error) {}
     }
 
     function speakNote(text) {
       if (!synth) return;
-
       synth.cancel();
-
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = parseFloat(speechRate.value);
       utterance.pitch = parseFloat(speechPitch.value);
-
-      if (voiceSelect.value !== '') {
-        utterance.voice = voices[parseInt(voiceSelect.value, 10)];
-      }
-
+      if (voiceSelect.value !== '') utterance.voice = voices[parseInt(voiceSelect.value, 10)];
       synth.speak(utterance);
     }
 
     function tick() {
       const note = getNextNote();
-
       playClickSound();
       speakNote(note.speak);
 
@@ -1132,24 +1327,25 @@
       noteDisplay.classList.add('pop');
       window.setTimeout(() => noteDisplay.classList.remove('pop'), 110);
 
+      if (fretboardToggle.checked) {
+        updateFretboard(note.id, note.name, false);
+      }
+
       beatPulse.classList.add('active');
       window.setTimeout(() => beatPulse.classList.remove('active'), 200);
 
-      historyQueue.unshift(note.name);
+      historyQueue.unshift({ type: 'note', name: note.name, id: note.id });
       renderHistory();
     }
 
     function renderHistory() {
       historyList.innerHTML = '';
-
       historyQueue.forEach((item, index) => {
-        if (typeof item === 'object' && item.type === 'divider') {
+        if (item.type === 'divider') {
           const divider = document.createElement('div');
           divider.className = 'history-divider';
-
           const label = document.createElement('span');
           label.textContent = `↻ Bag #${item.count}`;
-
           divider.appendChild(label);
           historyList.appendChild(divider);
           return;
@@ -1157,24 +1353,45 @@
 
         const badge = document.createElement('span');
         badge.className = `history-badge${index === 0 ? ' current' : ''}`;
-        badge.textContent = item;
+        badge.textContent = item.name;
+
+        // Mouse enter: temporarily reveal fretboard if option is enabled and update note
+        badge.addEventListener('mouseenter', () => {
+          if (!fretboardToggle.checked) {
+            if (hoverFretboardToggle.checked) {
+              fretboardContainer.style.display = 'flex';
+            } else {
+              return;
+            }
+          }
+          updateFretboard(item.id, item.name, true);
+        });
+
+        // Mouse leave: revert to normal state or re-hide fretboard
+        badge.addEventListener('mouseleave', () => {
+          if (!fretboardToggle.checked) {
+            fretboardContainer.style.display = 'none';
+            document.querySelectorAll('.fret-indicator').forEach(el => el.classList.remove('active', 'hovered'));
+          } else {
+            if (lastSpokenNoteId) {
+              const n = ALL_NOTES.find(x => x.id === lastSpokenNoteId);
+              if (n) updateFretboard(n.id, n.name, false);
+            } else {
+              document.querySelectorAll('.fret-indicator').forEach(el => el.classList.remove('active', 'hovered'));
+            }
+          }
+        });
+
         historyList.appendChild(badge);
       });
     }
 
     function triggerReshuffleNotification() {
       if (!reshuffleAlertToggle.checked) return;
-
       if (reshuffleTimeout) clearTimeout(reshuffleTimeout);
-
       reshuffleBanner.classList.add('visible');
-
       const bpm = parseInt(bpmInput.value, 10) || 60;
-      const displayDuration = Math.min(
-        1500,
-        Math.max(700, (60 / bpm) * 1000 * 0.8)
-      );
-
+      const displayDuration = Math.min(1500, Math.max(700, (60 / bpm) * 1000 * 0.8));
       reshuffleTimeout = window.setTimeout(() => {
         reshuffleBanner.classList.remove('visible');
       }, displayDuration);
@@ -1182,27 +1399,22 @@
 
     function startMetronome() {
       if (isPlaying) return;
-
       isPlaying = true;
       startStopBtn.className = 'danger-btn';
       startStopIcon.textContent = '■';
       startStopText.textContent = 'Stop Metronome';
-
       const bpm = parseInt(bpmInput.value, 10) || 60;
       const intervalMs = (60 / bpm) * 1000;
-
       tick();
       timerId = window.setInterval(tick, intervalMs);
     }
 
     function stopMetronome() {
       if (!isPlaying) return;
-
       isPlaying = false;
       if (timerId) window.clearInterval(timerId);
       timerId = null;
       if (synth) synth.cancel();
-
       startStopBtn.className = 'primary-btn';
       startStopIcon.textContent = '▶';
       startStopText.textContent = 'Start Scrambler';
@@ -1217,9 +1429,7 @@
       const bpm = Math.min(Math.max(parseInt(newBpm, 10) || 60, 20), 240);
       bpmInput.value = bpm;
       bpmSlider.value = bpm;
-
       renderTempoPresets();
-
       if (isPlaying) {
         window.clearInterval(timerId);
         timerId = window.setInterval(tick, (60 / bpm) * 1000);
@@ -1232,10 +1442,29 @@
     }
 
     startStopBtn.addEventListener('click', toggleMetronome);
-
     bpmInput.addEventListener('change', event => updateTempo(event.target.value));
     bpmSlider.addEventListener('input', event => updateTempo(event.target.value));
     addTempoPresetBtn.addEventListener('click', () => addTempoPreset(bpmInput.value));
+    
+    targetStringSelect.addEventListener('change', () => {
+      if (lastSpokenNoteId && fretboardToggle.checked) {
+        const note = ALL_NOTES.find(n => n.id === lastSpokenNoteId);
+        if (note) updateFretboard(note.id, note.name, false);
+      }
+    });
+
+    fretboardToggle.addEventListener('change', () => {
+      fretboardContainer.style.display = fretboardToggle.checked ? 'flex' : 'none';
+      localStorage.setItem('showFretboard', fretboardToggle.checked);
+      if (fretboardToggle.checked && lastSpokenNoteId) {
+        const note = ALL_NOTES.find(n => n.id === lastSpokenNoteId);
+        if (note) updateFretboard(note.id, note.name, false);
+      }
+    });
+
+    hoverFretboardToggle.addEventListener('change', () => {
+      localStorage.setItem('hoverFretboard', hoverFretboardToggle.checked);
+    });
 
     speechRate.addEventListener('input', event => {
       rateVal.textContent = `${parseFloat(event.target.value).toFixed(1)}x`;
@@ -1278,14 +1507,7 @@
     });
 
     const savedTheme = localStorage.getItem('theme');
-    if (
-      savedTheme === 'dark' ||
-      (
-        !savedTheme &&
-        window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches
-      )
-    ) {
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.dataset.theme = 'dark';
     } else {
       document.documentElement.dataset.theme = 'light';
@@ -1300,6 +1522,7 @@
 
     loadSettings();
     applyTheme();
+    initFretboard();
     renderNoteSelector();
     renderTempoPresets();
     renderHistory();
